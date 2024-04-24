@@ -69,6 +69,7 @@ type admitHandler struct {
 type Config struct {
 	CertFile string
 	KeyFile  string
+	Version  uint16
 }
 
 func configTLS(config Config) *tls.Config {
@@ -78,6 +79,7 @@ func configTLS(config Config) *tls.Config {
 	}
 	return &tls.Config{
 		Certificates: []tls.Certificate{sCert},
+		MinVersion:   config.Version,
 		// TODO: uses mutual tls after we agree on what cert the apiserver should use.
 		// ClientAuth:   tls.RequireAndVerifyClientCert,
 	}
@@ -253,10 +255,11 @@ func mutateImageCache(w http.ResponseWriter, r *http.Request) {
 }
 
 // StartWebhookServer starts a new wwebhook server for kube-fledged
-func StartWebhookServer(certFile string, keyFile string, port int) error {
+func StartWebhookServer(certFile string, keyFile string, port int, tlsVersion uint16) error {
 	config := Config{
 		CertFile: certFile,
 		KeyFile:  keyFile,
+		Version:  tlsVersion,
 	}
 
 	http.HandleFunc("/validate-image-cache", validateImageCache)

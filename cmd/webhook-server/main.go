@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 
 	"github.com/senthilrch/kube-fledged/cmd/webhook-server/app"
@@ -50,7 +51,7 @@ func main() {
 		}
 		return
 	}
-	if err := app.StartWebhookServer(certFile, keyFile, port); err != nil {
+	if err := app.StartWebhookServer(certFile, keyFile, port, tls.VersionTLS12); err != nil {
 		panic(err)
 	}
 }
